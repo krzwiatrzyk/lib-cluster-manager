@@ -2,3 +2,4 @@
 !.taskfiles/statusfiles/.gitkeep
 .vagrant/
 temp/
+.envrc
