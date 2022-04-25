@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  python-app:start:
+    dir: apps/python-app
+    cmds:
+      - python3 server.py
+
+  python-app:build-image:
+    dir: apps/python-app
+    cmds:
+    - docker build . -t python-app:1

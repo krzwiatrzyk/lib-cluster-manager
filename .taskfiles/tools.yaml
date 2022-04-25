@@ -1,0 +1,124 @@
+version: '3'
+
+tasks:
+  install:nodejs:
+    cmds:
+    - curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+    - sudo apt-get update
+    - sudo apt install nodejs -y
+    - node -v
+    - sudo npm install -g npm
+  install:git-conventional-commits:
+    deps:
+    - install:nodejs
+    cmds:
+    - sudo npm install --global git-conventional-commits
+
+  git-conventional-commits:init:
+    cmds:
+    - git-conventional-commits init
+
+  install:k3d:
+    cmds:
+    - wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+  install:flux:
+    cmds:
+    - curl -s https://fluxcd.io/install.sh | sudo bash
+
+  kubescape:install:
+    desc: Install Kubescape
+    cmds:
+    - curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
+
+  kubescape:scan:
+    desc: Scan current cluster and send output to SaaS
+    summary: |
+      To view results, visit: 
+      https://portal.armo.cloud
+
+    cmds:
+    - kubescape scan --submit --account=8023bf5f-e29d-4f3f-af91-391a9eebd366
+    - task tools:kubescape:scan --summary
+
+  k9s:install:
+    desc: Install or update K9s
+    cmds:
+    - arkade get k9s
+    preconditions:
+    - arkade
+    summery: |
+      Alternative command (if you don't want to use arkade)
+      > curl -sS https://webinstall.dev/k9s | bash
+
+  arkade:install:
+    desc: Install or update arkade
+    cmds:
+    - curl -sLS https://get.arkade.dev | sudo sh
+
+  dialog:install:
+    desc: Install dialog
+    cmds:
+    - sudo apt-get install dialog
+
+  yq:install:
+    desc: Install yq
+    env:
+      BINARY: yq_linux_amd64
+      VERSION: v4.24.2 
+    cmds:
+    - sudo wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq
+    - sudo chmod +x /usr/bin/yq
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+
+  tsh:install:
+    desc: Install tcl and tsh
+    cmds:
+    - curl -L -O https://get.gravitational.com/teleport-v9.0.0-linux-amd64-bin.tar.gz
+    - tar -xzf teleport-v9.0.0-linux-amd64-bin.tar.gz
+    - sudo mv teleport/tsh /usr/local/bin/tsh
+    - sudo mv teleport/tctl /usr/local/bin/tctl
+
+
+  podman:install:
+    cmds:
+    - source /etc/os-release && sudo echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+    - source /etc/os-release && sudo curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+    - sudo apt-get update
+    - sudo apt-get -y install podman
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    
+  rich:install:
+    desc: Install rick-cli
+    cmds:
+    - pip install rich-cli
+
+  kui:install:
+    desc: Install kui
+    dir: temp
+    cmds:
+    - wget -nc https://github.com/kubernetes-sigs/kui/releases/download/v11.4.4/Kui-linux-x64.zip 
+    - unzip Kui-linux-x64.zip
+    - sudo mkdir /usr/local/kui | true
+    - sudo mv Kui-linux-x64/* /usr/local/kui/
+    - rmdir Kui-linux-x64
+    - rm Kui-linux-x64.zip 
+
+  telepresence:install:
+    desc: Install telepresence
+    cmds:
+    - sudo curl -fL https://app.getambassador.io/download/tel2/linux/amd64/latest/telepresence -o /usr/local/bin/telepresence
+    - sudo chmod a+x /usr/local/bin/telepresence
+
+  telepresence:connect:
+    cmds:
+    - telepresence connect
+
+  ssh:generate-key:
+    dir: temp
+    cmds:
+    - ssh-keygen -t rsa -b 4096 -f ssh_key -C {{ .CLI_ARGS }}
+  

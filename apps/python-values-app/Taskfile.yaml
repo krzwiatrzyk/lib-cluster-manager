@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  pip:install:pipreqs:
+  - pip install pipreqs
+
+  pipreqs:generate-requirements:
+  - pipreqs --force .
+
+  pip:install:requirements:
+  - pip install -r requirements.txt

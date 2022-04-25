@@ -1,0 +1,28 @@
+version: '3'
+
+tasks:
+  grype:install:
+    cmds:
+    - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+
+  scan-python-app:dir:
+    dir: apps/python-app
+    cmds:
+    - grype . 
+
+  scan-python-app:sbom:
+    deps:
+    - :tools:syft:generate-sbom-for-python-app:image:json
+    dir: apps/python-app
+    cmds:
+    - grype sbom:./sbom.json
+
+  scan-python-app:image:
+    deps:
+    - :local-apps:python-app:build-image
+    dir: apps/python-app
+    cmds:
+    - grype python-app:1

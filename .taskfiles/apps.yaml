@@ -1,0 +1,101 @@
+version: '3'
+
+tasks:
+  kubernetes-dashboard:install:
+    desc: Install Kubernetes Dashboard
+    cmds:
+    - arkade install kubernetes-dashboard
+    - kubectl apply -f manifests/kubernetes-dashboard-tcp-route.yaml
+    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+      - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+
+  kubernetes-dashboard:token:
+    desc: Obtain token to access Kubernetes Dashboard
+    cmds:
+
+  dashy:update-values:
+    desc: Update Dashy values
+    deps:
+    - :tools:yq:install
+    env:
+      FILE:
+        sh: cat configs/dashy.yaml
+    cmds:
+    - yq e -i '.configmap.config.data.["conf.yml"] = strenv(FILE)' values/dashy.yaml
+
+  dashy:install:helm:
+    deps:
+    - dashy:update-values
+    desc: Install Dashy using Helm
+    cmds:
+    - >
+      helm upgrade --install -n dashy
+      --create-namespace=true
+      --values=values/dashy.yaml
+      dashy
+      krzwiatrzyk/dashy
+
+  dashy:install:flux:
+    desc: Install Dashy using flux
+    deps:
+    - :flux:add-sources:helm-repositories
+    - dashy:update-values
+    cmds:
+    - cmd: kubectl create namespace dashy
+      ignore_error: true
+    - >
+      flux create helmrelease dashy
+      --target-namespace=dashy
+      --source=HelmRepository/krzwiatrzyk
+      --chart=dashy
+      --values=values/dashy.yaml
+    preconditions:
+    - sh: "kubectl -n flux-system get deployment helm-controller"
+      msg: "Flux is not installed on the cluster! Run 'task flux:install' first"
+    - sh: "flux get sources helm | grep krzwiatrzyk"
+      msg: |
+        Install 'krzwiatrzyk' HelmRepository source first: 
+        
+        > task flux:add-sources:helm-repositories
+    
+  gocd:install:helm:
+    desc: Install GoCD using Helm
+    cmds:
+    - helm repo add gocd https://gocd.github.io/helm-chart
+    - helm upgrade --install --create-namespace gocd gocd/gocd --namespace gocd
+    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+
+  statping:install:helm:
+    desc: Install StatPing using Helm
+    cmds:
+    - helm repo add k8s-at-home https://k8s-at-home.com/charts/
+    - >
+      helm upgrade --install 
+      --namespace statping
+      --create-namespace
+      statping k8s-at-home/statping
+
+  reloader:install:helm:
+    desc: Install Reloader using Helm
+    cmds:
+    - helm repo add stakater https://stakater.github.io/stakater-charts
+    - helm upgrade --install reloader stakater/reloader
+
+  glances:run:docker:
+    desc: Run Glances in container
+    cmds:
+    - >
+      docker run -d 
+      --restart="always" 
+      -p 61208-61209:61208-61209 
+      -e GLANCES_OPT="-w" 
+      -v /var/run/docker.sock:/var/run/docker.sock:ro 
+      --pid host nicolargo/glances:3.2.0-full
+
+  traefik:install:helm:
+    cmds:
+    - helm repo add traefik https://helm.traefik.io/traefik
+    - helm install my-traefik traefik/traefik --version 10.19.4

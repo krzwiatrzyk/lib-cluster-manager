@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: statping
+  namespace: statping
+spec:
+  entryPoints:
+    - websecure
+    - web
+  routes:
+  - match: Host(`statping.127.0.0.1.nip.io`)
+    kind: Rule
+    services:   
+    - kind: Service 
+      name: statping
+      port: 8080

@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gocd
+  namespace: gocd
+spec:
+  entryPoints:
+    - websecure
+    - web
+  routes:
+  - match: Host(`gocd.127.0.0.1.nip.io`)
+    kind: Rule
+    services:   
+    - kind: Service 
+      name: gocd
+      port: 8153

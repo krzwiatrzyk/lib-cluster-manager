@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  serve-dir:
+    cmds:
+      - python3 -m http.server {{ .PORT }}
+    var:
+      PORT: '{{default "8000" .PORT}}'

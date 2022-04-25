@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+  install:
+    cmds:
+    - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+
+  generate-sbom-for-python-app:dir:
+    dir: apps/python-app
+    cmds:
+    - syft . > sbom.txt
+
+  generate-sbom-for-python-app:image:
+    deps:
+    - :local-apps:python-app:build-image
+    dir: apps/python-app
+    cmds:
+    - syft python-app:1 > sbom.txt
+
+  generate-sbom-for-python-app:image:json:
+    deps:
+    - :local-apps:python-app:build-image
+    dir: apps/python-app
+    cmds:
+    - syft python-app:1 -o json > sbom.json
+
+  generate-sbom-for-python-app:image:all-layers:
+    deps:
+    - :local-apps:python-app:build-image
+    dir: apps/python-app
+    cmds:
+    - syft python-app:1 > sbom.txt
+

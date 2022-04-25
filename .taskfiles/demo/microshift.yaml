@@ -1,0 +1,23 @@
+version: 3
+
+tasks:
+  run:
+  - sudo podman run -d --rm --name microshift --privileged -p 6443:6443 quay.io/microshift/microshift-aio:latest
+
+  delete:
+  - sudo podman rm -f microshift
+
+  provision:centos:vagrant:
+    dir: configs/vagrant/centos7
+    cmds:
+    - vagrant up
+
+  provision:centos:configure:
+    cmds: 
+    - |
+      sudo yum install -y podman
+      sudo curl -o /etc/systemd/system/microshift.service \
+          https://raw.githubusercontent.com/redhat-et/microshift/main/packaging/systemd/microshift-containerized.service
+      sudo systemctl enable microshift --now
+      curl -O https://mirror.openshift.com/pub/openshift-v4/$(uname -m)/clients/ocp/stable/openshift-client-linux.tar.gz
+      sudo tar -xf openshift-client-linux.tar.gz -C /usr/local/bin oc kubectl

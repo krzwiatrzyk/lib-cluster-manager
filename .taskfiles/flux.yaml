@@ -1,0 +1,67 @@
+version: '3'
+
+tasks:
+  pre-check:
+    desc: "Check if flux can be installed on the cluster"
+    cmds:
+      - flux check --pre
+    
+  bootstrap:
+    cmds: 
+    - |
+      flux bootstrap github \
+      --owner=$GITHUB_USER \
+      --repository=local-cluster \
+      --branch=main \
+      --path=./flux \
+      --personal
+    preconditions:
+    - sh: "[ ! -z $GITHUB_USER ]"
+    - sh: "[ ! -z $GITHUB_TOKEN ]"
+
+  install:
+    vars:
+      STATUS_FILE: .taskfiles/statusfiles/flux_installed
+    desc: Install Flux on the cluster
+    cmds:
+    - flux install
+    - touch {{ .STATUS_FILE }}
+    status:
+    - test -f {{ .STATUS_FILE }}
+
+    
+  example:create-source:
+    cmds:
+    - |
+      flux create source git podinfo \
+      --url=https://github.com/stefanprodan/podinfo \
+      --branch=master \
+      --interval=5m \
+      --export > ./flux/sources/podinfo-source.yaml
+
+  example:create-kustomization:
+    cmds: 
+    - |
+      flux create kustomization podinfo \
+      --target-namespace=default \
+      --source=podinfo \
+      --path="./kustomize" \
+      --prune=true \
+      --interval=5m \
+      --export > ./flux/kustomizations/podinfo-kustomization.yaml
+
+  example:watch-kustomizations: flux get kustomizations --watch
+
+  add-sources:helm-repositories:
+    deps:
+    - :flux:install
+    cmds:
+    - >
+      flux create source helm krzwiatrzyk
+      --url https://krzwiatrzyk.github.io/charts/
+    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+
+  # Notes:
+  # flux suspend/flux resume

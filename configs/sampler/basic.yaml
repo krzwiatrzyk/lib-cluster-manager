@@ -1,0 +1,5 @@
+textboxes:
+  - title: SSH
+    pty: true
+    init: localhost
+    sample: top

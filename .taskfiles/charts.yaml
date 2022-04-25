@@ -1,0 +1,21 @@
+version: '3'
+
+tasks:
+  helm:add-repos:
+  - helm repo add coredns https://coredns.github.io/helm
+  
+  install:coredns:
+    cmds:
+    - helm upgrade --install -n tools --create-namespace coredns coredns/coredns --values values/coredns.yaml
+    - kubectl -n tools apply -f manifests/coredns-service.yaml
+
+  install:hyperion:
+    cmds:
+    - ansible-playbook playbooks/helm.yaml
+        
+  install:ingress-nginx:
+    desc: Install nginx ingress controller
+    preconditions:
+    - arkade
+    cmds:
+    - akrade install ingress-nginx

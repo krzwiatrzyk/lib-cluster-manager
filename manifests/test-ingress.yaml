@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashy
+  namespace: flux-system
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: dashy.172.20.0.2.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: dashy
+                port:
+                  number: 80
+            path: /

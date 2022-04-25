@@ -1,0 +1,13 @@
+textboxes:
+  - title: Docker containers stats
+    position: [[0, 0], [40, 5]]
+    sample: docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}\t{{.PIDs}}"
+sparklines:
+  - title: CPU usage
+    rate-ms: 1000
+    scale: 0
+    sample: ps -A -o %cpu | awk '{s+=$1} END {print s}'
+  - title: Used memory
+    rate-ms: 1000
+    scale: 0
+    sample: free -m | grep 'Mem' | awk '{print $3}'

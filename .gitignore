@@ -1,0 +1,4 @@
+.taskfiles/statusfiles/*
+!.taskfiles/statusfiles/.gitkeep
+.vagrant/
+temp/

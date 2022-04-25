@@ -1,0 +1,18 @@
+storageClass:
+  create: true
+  defaultClass: true
+  name: local
+  reclaimPolicy: Retain
+
+nodePathMap:
+  - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+    paths:
+      - /k3s-pv
+
+resources: {}
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+#   requests:
+#     cpu: 100m
+#     memory: 128Mi

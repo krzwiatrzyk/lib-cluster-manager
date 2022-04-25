@@ -1,0 +1,49 @@
+version: '3'
+
+tasks:
+  istioctl:install:
+    cmds: 
+    - arkade get istioctl
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+
+  istioctl:completion:zsh:
+    summary: |
+      Remember to execute 'compinit'!
+    cmds:
+    - istioctl completion zsh > ~/.oh-my-zsh/completions/_istioctl
+    - task --summary istio:istioctl:completion:zsh
+    preconditions:
+    - sh: istioctl
+
+  operator:install:
+    deps:
+    - istioctl:install
+    cmds:
+    - istioctl operator init
+    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+
+  operator:apply-instance:
+    deps:
+    - operator:install
+    cmds:
+    - kubectl apply -f manifests/istio-instance.yaml
+    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+  
+  kiali:install:
+    deps:
+    - operator:apply-instance
+    cmds:
+    - >
+      helm upgrade --install
+      --namespace istio-system
+      --set auth.strategy="anonymous"
+      --repo https://kiali.org/helm-charts
+      kiali-server
+      kiali-server
+    - kubectl apply -f manifests/kiali-ingress-gateway.yaml

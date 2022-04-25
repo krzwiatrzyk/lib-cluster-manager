@@ -1,0 +1,24 @@
+version: '3'
+
+tasks:
+  completions:
+    desc: "Add Oh-My-ZSH completions"
+    cmds:
+      - flux completion zsh > ~/.oh-my-zsh/completions/_flux
+    summary: |
+      Execute: compinit
+
+  completions:task:
+    cmds:
+    - git clone https://github.com/sawadashota/go-task-completions.git ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/task
+    summary: |
+      plugins=(… task)
+      autoload -U compinit && compinit
+
+  fix-history:
+    cmds:
+    - |
+      cd ~
+      mv .zsh_history .zsh_history_bad
+      strings -eS .zsh_history_bad > .zsh_history
+      zsh -c "fc -R .zsh_history"

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coredns-custom-service
+spec:
+  ports:
+  - name: udp-53
+    port: 53
+    protocol: UDP
+    targetPort: 53
+    nodePort: 32220
+  - name: tcp-53
+    port: 53
+    protocol: TCP
+    targetPort: 53
+    nodePort: 32220
+  selector:
+    app.kubernetes.io/instance: coredns
+    app.kubernetes.io/name: coredns
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}

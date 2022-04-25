@@ -1,0 +1,20 @@
+---
+- name: Install Helm Applications
+  hosts: localhost
+
+  tasks:
+  - name: Add Devtron chart repository
+    kubernetes.core.helm_repository:
+      name: devtron
+      repo_url: http://helm.devtron.ai/
+
+  - name: Install Hyperion
+    kubernetes.core.helm:
+      name: hyperion
+      chart_ref: devtron/devtron-operator
+      release_namespace: devtroncd
+      create_namespace: true
+      values:
+        installer:
+          mode: hyperion
+      state: absent
