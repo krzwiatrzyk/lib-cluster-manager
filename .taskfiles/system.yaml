@@ -1,6 +1,0 @@
-version: '3'
-
-tasks:
-  show-used-dns:
-    cmds:
-      - systemd-resolve --status

@@ -1,33 +1,19 @@
 version: '3'
 
 includes:
-  demo:microshift: .taskfiles/demo/microshift.yaml
-
-  # cluster: .taskfiles/cluster.yaml
-  # cluster:istio: .taskfiles/cluster/istio.yaml
-  # cluster:dashy: .taskfiles/cluster/dashy.yaml
-  # cluster:minimal: .taskfiles/cluster/minimal.yaml
-  # cluster:gocd: .taskfiles/cluster/gocd.yaml
-  # cluster:teleport: .taskfiles/cluster/teleport.yaml
-  # cluster:traefik-monitoring: .taskfiles/cluster/traefik-monitoring.yaml
-  
+  demo:microshift: .taskfiles/demo/microshift.yaml  
   charts: .taskfiles/charts.yaml
-  system: .taskfiles/system.yaml
-  zsh: .taskfiles/zsh.yaml
   flux: .taskfiles/flux.yaml
-  tools: .taskfiles/tools.yaml
   tools:syft: .taskfiles/tools/syft.yaml
   tools:grype: .taskfiles/tools/grype.yaml
-  git: .taskfiles/git.yaml
+  git: ../lib-system-manager/.taskfiles/git.yaml
   ansible: .taskfiles/ansible.yaml
   python: .taskfiles/python.yaml
   apps: .taskfiles/apps.yaml
   apps:teleport: .taskfiles/apps/teleport.yaml
   local-apps: .taskfiles/local-apps.yaml
-  dialogs: .taskfiles/dialogs.yaml
   istio: .taskfiles/istio.yaml
   monitoring: .taskfiles/monitoring.yaml
-
 
 vars:
   STATUS_FILES_PATH: .taskfiles/statusfiles

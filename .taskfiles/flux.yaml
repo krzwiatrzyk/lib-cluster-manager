@@ -5,6 +5,13 @@ tasks:
     desc: "Check if flux can be installed on the cluster"
     cmds:
       - flux check --pre
+
+  completions:
+    desc: "Add Oh-My-ZSH completions"
+    cmds:
+      - flux completion zsh > ~/.oh-my-zsh/completions/_flux
+    summary: |
+      Execute: compinit
     
   bootstrap:
     cmds: 
