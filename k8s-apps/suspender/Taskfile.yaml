@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  install:manifests:
+  - task: create-namespace
+  - kubectl apply -n kube-ns-suspender -f https://raw.githubusercontent.com/govirtuo/kube-ns-suspender/v2.0.10/manifests/run/base/service-pprof.yaml
+  - kubectl apply -n kube-ns-suspender -f https://raw.githubusercontent.com/govirtuo/kube-ns-suspender/v2.0.10/manifests/run/base/service-ui.yaml
+  - kubectl apply -f manifests/
+
+  create-namespace:
+  - kubectl create namespace kube-ns-suspender || true

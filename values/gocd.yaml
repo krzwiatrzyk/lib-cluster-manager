@@ -1,0 +1,20 @@
+# server:
+#   persistence:
+#     enabled: false
+
+#   extraVolumeMounts:
+#     - mountPath: /godata                                                                                      
+#       name: goserver-vol                                                                                      
+#       subPath: godata                                                                                        
+#     - mountPath: /home/go                                                                                           
+#       name: goserver-vol                                                                                     
+#       subPath: homego                                                                                       
+#     - mountPath: /docker-entrypoint.d                                                                               
+#       name: goserver-vol                                                                                     
+#       subPath: scripts 
+
+#   extraVolumes:
+#     - name: goserver-vol
+#       hostPath:
+#         path: /k3d/gocd 
+

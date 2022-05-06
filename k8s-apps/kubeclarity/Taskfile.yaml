@@ -1,0 +1,9 @@
+version: 3
+
+tasks:
+  install:helm:
+  - helm repo add kubeclarity https://openclarity.github.io/kubeclarity
+  - helm upgrade --install --values values.yaml --create-namespace kubeclarity kubeclarity/kubeclarity -n kubeclarity
+
+  install:ingress-route:
+  - kubectl apply -f manifests/ingress-route.yaml

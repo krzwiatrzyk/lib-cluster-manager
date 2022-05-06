@@ -1,0 +1,21 @@
+version: 3
+
+tasks:
+  install:helm:
+    desc: Install GoCD using Helm
+    cmds:
+    - helm repo add gocd https://gocd.github.io/helm-chart
+    - >
+      helm upgrade 
+      --install 
+      --create-namespace gocd gocd/gocd 
+      --namespace gocd
+      --values values/gocd.yaml
+
+  install:ingressroute:
+    desc: Install GoCD IngressRoute
+    cmds:
+    - kubectl apply -f manifests/gocd/gocd-ingress-route.yaml
+
+  patch:hostpath:
+  - kubectl patch deployment -n gocd gocd-server  --type merge --patch-file patches/gocd-hostpath.yaml

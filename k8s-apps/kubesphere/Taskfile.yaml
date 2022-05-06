@@ -1,0 +1,6 @@
+version: 3
+
+tasks:
+  install:helm:
+  - helm repo add kubesphere https://charts.kubesphere.io/main
+  - helm upgrade --install kubesphere kubesphere/ks-installer --namespace=kubesphere-system --create-namespace --values values.yaml

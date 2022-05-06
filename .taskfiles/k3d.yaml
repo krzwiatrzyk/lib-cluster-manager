@@ -35,11 +35,12 @@ tasks:
 
   wait-for-traefik:
     cmds:
-    - sleep 5s
+    - sleep 10s
     - kubectl wait -n kube-system job/helm-install-traefik --for condition=Complete --timeout 300s
+    - kubectl wait -n kube-system job/helm-install-traefik-crd --for condition=Complete --timeout 300s
     - sleep 5s
     - kubectl wait -n kube-system deployment/traefik --for condition=Available --timeout 300s
-    - kubectl apply -f manifests/traefik-ingress-route.yaml
+    - kubectl apply -f https://raw.githubusercontent.com/krzwiatrzyk/lib-cluster-manager/main/manifests/traefik-ingress-route.yaml
     
   create-admin-service-account:
     cmds:

@@ -1,0 +1,11 @@
+spec:
+  template:
+    spec:
+      volumes:
+      - name: goserver-vol
+        hostPath:
+          path: /k3d/gocd
+      - name: config-vol
+        configMap:
+          defaultMode: 420
+          name: gocd

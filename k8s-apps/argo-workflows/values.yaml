@@ -1,0 +1,8 @@
+server:
+  extraArgs:
+  - --auth-mode=server
+
+controller:
+  # -- Specifies the container runtime interface to use (one of: `docker`, `kubelet`, `k8sapi`, `pns`, `emissary`)
+  ## Ref: https://argoproj.github.io/argo-workflows/workflow-executors/
+  containerRuntimeExecutor: emissary

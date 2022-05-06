@@ -58,15 +58,7 @@ tasks:
         Install 'krzwiatrzyk' HelmRepository source first: 
         
         > task flux:add-sources:helm-repositories
-    
-  gocd:install:helm:
-    desc: Install GoCD using Helm
-    cmds:
-    - helm repo add gocd https://gocd.github.io/helm-chart
-    - helm upgrade --install --create-namespace gocd gocd/gocd --namespace gocd
-    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
-    status:
-    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+
 
   statping:install:helm:
     desc: Install StatPing using Helm

@@ -1,0 +1,17 @@
+version: 3
+
+tasks:
+  install:plugin:
+  #- bash < <(curl -sSLf https://kubeshop.github.io/testkube/install.sh)
+  - wget -nc https://github.com/kubeshop/testkube/releases/download/v1.0.16/testkube_1.0.16_Linux_x86_64.tar.gz
+  - mkdir testkube || true
+  - tar -zxvf testkube_1.0.16_Linux_x86_64.tar.gz --directory testkube
+  - mv testkube/kubectl-testkube ~/.krew/bin/
+  - rm -rf testkube
+  - rm testkube_*
+
+  install:components:
+  - kubectl testkube install
+
+  install:ingress-route:
+  - kubectl apply -f manifests/ingress-route.yaml

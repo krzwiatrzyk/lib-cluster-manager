@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow                  
+metadata:
+  generateName: cowsay-   
+spec:
+  entrypoint: whalesay         
+  arguments:
+    parameters:
+    - name: message
+      value: "Good Morning!"
+  
+  templates:
+  - name: whalesay              
+    inputs:
+      parameters:
+      - name: message  
+    container:
+      image: docker/whalesay
+      command: [cowsay]
+      args: ["{{inputs.parameters.message}}"]
+      resources:               
+        limits:
+          memory: 32Mi
+          cpu: 100m
