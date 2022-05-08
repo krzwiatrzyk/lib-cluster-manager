@@ -1,0 +1,5 @@
+clusterName: teleport.127.0.0.1.nip.io
+
+authenticationSecondFactor:
+  secondFactor: "off"
+

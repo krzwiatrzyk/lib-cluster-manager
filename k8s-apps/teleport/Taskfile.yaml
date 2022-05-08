@@ -4,9 +4,10 @@ tasks:
   add-helm-repo:
     cmds:
     - helm repo add teleport https://charts.releases.teleport.dev
-    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
     status:
-    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
+    - helm repo list | grep teleport
+    preconditions:
+    - helm
 
   install:helm:
     deps:
@@ -16,9 +17,6 @@ tasks:
       helm upgrade --install teleport-cluster teleport/teleport-cluster
       --set clusterName=teleport.127.0.0.1.nip.io
     - sleep 5s && kubectl wait pod -l app=teleport-cluster --for condition=Ready --timeout 180s
-    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
-    status:
-    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
 
   show-helm-values:
     deps:
@@ -33,12 +31,9 @@ tasks:
       POD: 
         sh: kubectl get pod -l app=teleport-cluster -o jsonpath='{.items[0].metadata.name}'
     cmds:
-    - kubectl exec -i ${POD?} -- tctl create -f < configs/teleport-role.yaml
+    - kubectl exec -i ${POD?} -- tctl create -f < config/teleport-role.yaml
     - kubectl exec -ti ${POD?} -- tctl  users add krzwiatrzyk --logins=krzwiatrzyk,root --roles=member,access,editor
-    - touch {{ .STATUS_FILES_PATH }}/{{ .TASK }}
-    status:
-    - test -f {{ .STATUS_FILES_PATH }}/{{ .TASK }}
-
+    
   login-to-kubernetes:
     cmds:
     - tsh --insecure login --proxy=teleport.127.0.0.1.nip.io:443 --auth=local --user=krzwiatrzyk teleport.127.0.0.1.nip.io

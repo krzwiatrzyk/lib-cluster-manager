@@ -10,7 +10,6 @@ includes:
   ansible: .taskfiles/ansible.yaml
   python: .taskfiles/python.yaml
   apps: .taskfiles/apps.yaml
-  apps:teleport: .taskfiles/apps/teleport.yaml
   local-apps: .taskfiles/local-apps.yaml
   istio: .taskfiles/istio.yaml
   monitoring: .taskfiles/monitoring.yaml
