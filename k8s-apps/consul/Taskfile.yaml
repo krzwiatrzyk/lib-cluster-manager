@@ -1,0 +1,19 @@
+version: 3
+
+tasks:
+  install:tool:cli:
+    cmds:
+    - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+    - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    - sudo apt-get update && sudo apt-get install consul-k8s -y
+    status:
+    - command -v consul-k8s
+
+  install:
+  - consul-k8s install -config-file=values/values.yaml
+
+  values:firefox:
+  - firefox https://artifacthub.io/packages/helm/hashicorp/consul?modal=values
+
+  install:ingress:
+  - kubectl apply -f manifests/ingress.yaml

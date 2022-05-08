@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubecost
+  namespace: kubecost
+spec:
+  rules:
+  - host: kubecost.127.0.0.1.nip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: kubecost-cost-analyzer
+            port:
+              name: tcp-frontend
+        path: /
+        pathType: Prefix

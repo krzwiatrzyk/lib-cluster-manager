@@ -1,0 +1,28 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+    status:
+    - helm repo list | grep bitnami
+  
+  install:helm:
+    cmds:
+    - helm upgrade --install ghost bitnami/ghost --namespace ghost --create-namespace --values=values/values.yaml
+
+  install:helm:custom-values:
+    vars:
+      VALUES_FILE: '{{ .VALUES_FILE }}'
+    cmds:
+    - helm upgrade --install ghost bitnami/ghost --namespace ghost --create-namespace --values=values/values.yaml --values={{ .VALUES_FILE }}
+
+  install:ingress-route:
+    cmds:
+    - kubectl apply -f manifests/ingres-route.yaml
+
+  uninstall:
+    - helm uninstall -n ghost ghost
+
+  uninstall:pvc:
+    - kubectl delete -n ghost $(kubectl get pvc -n ghost -o name | grep ghost)

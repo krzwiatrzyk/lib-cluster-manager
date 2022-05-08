@@ -1,0 +1,26 @@
+version: 3
+
+tasks:
+  install:cli:
+    cmds:
+    - curl -sLS https://get.k3sup.dev | sh
+    - sudo install k3sup /usr/local/bin/  
+    - rm k3sup
+    status:
+    - command -v k3sup
+
+  install:cluster:
+    vars:
+      IP: '{{ .IP }}'
+      USER: '{{ .USER }}'
+      NAME: '{{ .NAME }}'
+      K3S_EXTRA_ARGS: '{{ .K3S_EXTRA_ARGS }}'
+    cmds:
+    - >
+      k3sup install 
+      --ip {{ .IP }} 
+      --user {{ .USER }}
+      --local-path ~/.kube/config 
+      --merge
+      --context {{ .NAME }}
+      --k3s-extra-args '{{ .K3S_EXTRA_ARGS }}'

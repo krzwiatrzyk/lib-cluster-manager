@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: teleport-database
+  namespace: teleport
+spec:
+  entryPoints:                  
+    - tp-database
+  routes:                       
+  - match: HostSNI(`teleport.{suffix:.*}`)                   
+    services:                 
+    - name: teleport-cluster            
+      port: 3036         
+  tls:                          
+    passthrough: true         

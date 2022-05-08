@@ -1,0 +1,4 @@
+persistentVolume:
+  size: 32Gi
+  dbSize: 32.0Gi
+  enabled: false

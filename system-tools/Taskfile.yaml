@@ -1,0 +1,129 @@
+version: 3
+
+tasks:
+  install:necesities:
+  - task: arkade:install
+  - task: helm:install
+  - task: k3d:install
+  - task: k9s:install
+  - task: kubectl:install
+  - task: kubectl:install:plugin:krew
+  - task: kubectl:install:plugin:konfig
+
+  kubectl:install:
+    cmds:
+    - arkade get kubectl
+    status:
+    - command -v kubectl
+
+  kubectl:install:plugin:krew:
+    cmds:
+    - >
+      (
+        cd "$(mktemp -d)" &&
+        OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+        KREW="krew-${OS}_${ARCH}" &&
+        curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+        tar zxvf "${KREW}.tar.gz" &&
+        ./"${KREW}" install krew
+      )
+    #- arkade get krew
+    status:
+    - kubectl krew
+
+  kubectl:install:plugin:konfig:
+    cmds:
+    - kubectl krew install konfig
+    status:
+    - kubectl konfig
+
+  arkade:install:
+    desc: Install or update arkade
+    cmds:
+    - curl -sLS https://get.arkade.dev | sudo sh
+    status:
+    - command -v arkade
+
+  lens:install:
+    cmds:
+    - sudo snap install kontena-lens --classic
+    desc: Lens is a Kubernetes manager with UI
+
+  helm:install:
+    cmds:
+    - arkade get helm
+    desc: Helm is a Kubernetes chart manager
+    status:
+    - command -v helm
+
+  helm-secrets:install:
+  - helm plugin install https://github.com/jkroepke/helm-secrets --version v3.13.0
+
+  argocd:install:
+    - arkade get argocd
+
+  podman:install:
+    cmds:
+    - source /etc/os-release && sudo echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+    - source /etc/os-release && sudo curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+    - sudo apt-get update
+    - sudo apt-get -y install podman
+    - touch {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+    status:
+    - test -f {{ .USER_STATUS_FILES_PATH }}/{{ .TASK }}
+
+  kui:install:
+    desc: Install kui
+    dir: temp
+    cmds:
+    - wget -nc https://github.com/kubernetes-sigs/kui/releases/download/v11.4.4/Kui-linux-x64.zip 
+    - unzip Kui-linux-x64.zip
+    - sudo mkdir /usr/local/kui | true
+    - sudo mv Kui-linux-x64/* /usr/local/kui/
+    - rmdir Kui-linux-x64
+    - rm Kui-linux-x64.zip 
+
+  k3d:install:
+    cmds:
+    - arkade get k3d
+    status:
+    - command -v k3d
+  
+  flux:install:
+    cmds:
+    - curl -s https://fluxcd.io/install.sh | sudo bash
+
+  kubescape:install:
+    desc: Install Kubescape
+    cmds:
+    - curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
+
+  kubescape:scan:
+    desc: Scan current cluster and send output to SaaS
+    summary: |
+      To view results, visit: 
+      https://portal.armo.cloud
+
+    cmds:
+    - kubescape scan --submit --account=8023bf5f-e29d-4f3f-af91-391a9eebd366
+    - task tools:kubescape:scan --summary
+
+  k9s:install:
+    desc: Install or update K9s
+    cmds:
+    - arkade get k9s
+    preconditions:
+    - arkade
+    status:
+    - command -v k3d
+    summary: |
+      Alternative command (if you don't want to use arkade)
+      > curl -sS https://webinstall.dev/k9s | bash
+
+
+  podman-desktop-companion:install:
+    cmds:
+    - wget -nc https://github.com/iongion/podman-desktop-companion/releases/download/4.0.3-rc.5/podman-desktop-companion-x86_64-4.0.3-rc.5.AppImage
+    - chmod +x podman-desktop-companion-x86_64-4.0.3-rc.5.AppImage
+    - mv podman-desktop-companion-x86_64-4.0.3-rc.5.AppImage ~/.local/bin/podman-desktop-companion

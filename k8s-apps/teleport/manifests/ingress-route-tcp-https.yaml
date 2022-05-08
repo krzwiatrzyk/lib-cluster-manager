@@ -1,0 +1,31 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: teleport-https
+  namespace: teleport
+spec:
+  entryPoints:                  
+    - websecure
+  routes:                       
+  - match: HostSNI(`teleport.{suffix:.*}`)                    
+    services:                 
+    - name: teleport-cluster            
+      port: 443         
+  tls:                          
+    passthrough: true         
+
+# apiVersion: traefik.containo.us/v1alpha1
+# kind: IngressRoute
+# metadata:
+#   name: teleport-https
+#   namespace: teleport
+# spec:
+#   entryPoints:                  
+#     - websecure
+#   routes:                       
+#   - kind: Rule
+#     match: Host(`teleport.127.0.0.1.nip.io`)                    
+#     services:                 
+#     - kind: Service
+#       name: teleport-cluster            
+#       port: 443    

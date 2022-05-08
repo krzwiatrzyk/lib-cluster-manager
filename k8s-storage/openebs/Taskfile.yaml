@@ -1,0 +1,22 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add openebs https://openebs.github.io/charts
+    status:
+    - helm repo list | grep openebs
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install openebs --namespace openebs --create-namespace openebs/openebs -f values.yaml
+
+  uninstall:helm:
+    cmds:
+    - helm uninstall -n openebs openebs
+
+  values:firefox:
+  - firefox https://artifacthub.io/packages/helm/openebs/openebs
+

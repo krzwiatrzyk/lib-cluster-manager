@@ -1,0 +1,15 @@
+{
+  "spec": {
+    "routes": [
+      {
+        "match": "HostSNI(`${FQDN}`)",
+        "services": [
+          {
+            "name": "teleport-cluster",
+            "port": 3036
+          }
+        ]
+      }
+    ]
+  }
+}

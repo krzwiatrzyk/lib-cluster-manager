@@ -1,9 +1,20 @@
 version: 3
 
 tasks:
+  install:add-repo:
+    cmds:
+    - helm repo add kubeclarity https://openclarity.github.io/kubeclarity
+    status:
+    - helm repo list | grep kubeclarity
+
   install:helm:
-  - helm repo add kubeclarity https://openclarity.github.io/kubeclarity
-  - helm upgrade --install --values values.yaml --create-namespace kubeclarity kubeclarity/kubeclarity -n kubeclarity
+    deps:
+    - install:add-repo
+    cmds:
+    - helm upgrade --install --values values.yaml --create-namespace kubeclarity kubeclarity/kubeclarity -n kubeclarity
 
   install:ingress-route:
   - kubectl apply -f manifests/ingress-route.yaml
+
+  install:ingress:
+  - kubectl apply -f manifests/ingress.yaml

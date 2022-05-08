@@ -1,0 +1,30 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add kubecost https://kubecost.github.io/cost-analyzer/
+    status:
+    - helm repo list | grep kubecost
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install kubecost kubecost/cost-analyzer --namespace kubecost --create-namespace --values=values/values-ingress.yaml
+
+  uninstall:helm:
+    cmds:
+    - helm uninstall -n kubecost kubecost
+
+  install:ingress:grafana:
+    cmds:
+    - kubectl apply -f manifests/grafana-ingress.yaml
+
+  install:ingress:prometheus:
+    cmds:
+    - kubectl apply -f manifests/prometheus-ingress.yaml
+
+  install:ingress:kubecost:
+    cmds:
+    - kubectl apply -f manifests/kubecost-ingress.yaml

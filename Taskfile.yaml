@@ -10,11 +10,26 @@ includes:
   ansible: .taskfiles/ansible.yaml
   python: .taskfiles/python.yaml
   apps: .taskfiles/apps.yaml
-  apps:teleport: .taskfiles/apps/teleport.yaml
   local-apps: .taskfiles/local-apps.yaml
   istio: .taskfiles/istio.yaml
-  monitoring: .taskfiles/monitoring.yaml
-
+  k8s-tools:mizu: k8s-tools/mizu/Taskfile.yaml
+  k8s-apps:skydive: 
+    taskfile: k8s-apps/skydive/Taskfile.yaml
+    dir: k8s-apps/skydive
+  k8s-apps:echo-server: 
+    taskfile: k8s-apps/echo-server/Taskfile.yaml
+    dir: k8s-apps/echo-server
+  k8s-dashboards:weave-scope:
+    taskfile: k8s-dashboards/weave-scope/Taskfile.yaml
+    dir: k8s-dashboards/weave-scope
+  k8s-tools:octant:
+    taskfile: k8s-tools/octant/Taskfile.yaml
+    dir: k8s-tools/octant
+  k8s-utils:node-problem-detector: 
+    taskfile: k8s-utils/node-problem-detector/Taskfile.yaml
+    dir: k8s-utils/node-problem-detector
+  k3s:
+    taskfile: system-tools/k3s/Taskfile.yaml
 vars:
   STATUS_FILES_PATH: .taskfiles/statusfiles
   USER_STATUS_FILES_PATH: ~/.statusfiles

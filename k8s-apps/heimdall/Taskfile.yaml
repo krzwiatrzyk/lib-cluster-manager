@@ -1,0 +1,21 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add k8s-at-home https://k8s-at-home.com/charts/
+    status:
+    - helm repo list | grep k8s-at-home
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install heimdall k8s-at-home/heimdall -n heimdall --create-namespace --values=values/values.yaml
+
+  install:ingress-route:
+    cmds:
+    - kubectl apply -f manifests/ingress-route.yaml
+
+  uninstall:helm:
+    - helm uninstall -n heimdall heimdall

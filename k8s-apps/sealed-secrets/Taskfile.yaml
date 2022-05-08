@@ -1,0 +1,9 @@
+version: 3
+
+tasks:
+  kubeseal:install:
+  - arkade get kubeseal
+
+  install:sealed-secrets:
+  - helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+  - helm upgrade --install sealed-secrets -n kube-system sealed-secrets/sealed-secrets -f sealed-secrets-values.yaml

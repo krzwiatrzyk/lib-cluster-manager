@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubeclarity
+  namespace: kubeclarity
+spec:
+  rules:
+  - host: kubeclarity.127.0.0.1.nip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: kubeclarity-kubeclarity
+            port:
+              name: backend
+        path: /
+        pathType: Prefix

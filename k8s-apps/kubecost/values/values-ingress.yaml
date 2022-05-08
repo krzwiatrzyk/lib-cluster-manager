@@ -1,0 +1,13 @@
+persistentVolume:
+  size: 32Gi
+  dbSize: 32.0Gi
+  enabled: false
+
+ingress:
+  enabled: false
+  hosts:
+  - kubecost.127.0.0.1.nip.io
+
+grafana:
+  grafana.ini:
+    server: {} # <---- this is a root cause if issues in with grafana dashboard visibility

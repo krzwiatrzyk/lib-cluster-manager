@@ -1,0 +1,50 @@
+{
+  "spec": {
+    "template": {
+      "spec": {
+        "$setElementOrder/containers": [
+          {
+            "name": "traefik"
+          }
+        ],
+        "containers": [
+          {
+            "args": [
+              "--global.checknewversion",
+              "--global.sendanonymoususage",
+              "--entrypoints.metrics.address=:9100/tcp",
+              "--entrypoints.traefik.address=:9000/tcp",
+              "--entrypoints.web.address=:8000/tcp",
+              "--entrypoints.websecure.address=:8443/tcp",
+              "--entrypoints.teleport-ssh-proxy.address=:3023/tcp",
+              "--entrypoints.teleport-ssh-tunnel.address=:3024/tcp",
+              "--entrypoints.teleport-database.address=:3036/tcp",
+              "--entrypoints.teleport-kubernetes.address=:3026/tcp",
+              "--api.dashboard=true",
+              "--ping=true",
+              "--metrics.prometheus=true",
+              "--metrics.prometheus.entrypoint=metrics",
+              "--providers.kubernetescrd",
+              "--providers.kubernetesingress",
+              "--providers.kubernetesingress.ingressendpoint.publishedservice=kube-system/traefik",
+              "--entrypoints.websecure.http.tls=true"
+            ],
+            "name": "traefik",
+            "ports": [
+              {
+                "containerPort": 3023,
+                "name": "tp-ssh-proxy",
+                "protocol": "TCP"
+              },
+              {
+                "containerPort": 3026,
+                "name": "tp-kubernetes",
+                "protocol": "TCP"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

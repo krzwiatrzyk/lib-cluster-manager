@@ -9,3 +9,11 @@ tasks:
 
   create-namespace:
   - kubectl create namespace kube-ns-suspender || true
+
+  install:plugin:
+    vars:
+      VERSION: 0.1.1
+    cmds:
+      - wget https://github.com/govirtuo/kubectl-suspender/releases/download/v{{ .VERSION }}/kubectl-suspender_linux_amd64
+      - chmod +x kubectl-suspender_linux_amd64
+      - sudo mv kubectl-suspender_linux_amd64 /usr/local/bin/kubectl-suspender

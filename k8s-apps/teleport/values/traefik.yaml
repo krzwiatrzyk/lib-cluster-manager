@@ -1,0 +1,50 @@
+ports:
+  tp-kubernetes:
+    port: 3026
+    expose: true
+    exposedPort: 3026
+    protocol: TCP
+  tp-database:
+    port: 3036
+    expose: true
+    exposedPort: 3036
+    protocol: TCP
+  tp-ssh-tunnel:
+    port: 3024
+    expose: true
+    exposedPort: 3024
+    protocol: TCP
+  tp-ssh-proxy:    
+    port: 3023
+    expose: true
+    exposedPort: 3023
+    protocol: TCP
+  # websecure:
+  #   tls:
+  #     enabled: true
+
+global:
+  systemDefaultRegistry: ""
+image:
+  name: rancher/mirrored-library-traefik
+  tag: 2.6.1
+podAnnotations:
+  prometheus.io/port: "8082"
+  prometheus.io/scrape: "true"
+
+priorityClassName: system-cluster-critical
+providers:
+  kubernetesIngress:
+    publishedService:
+      enabled: true
+rbac:
+  enabled: true
+tolerations:
+- key: CriticalAddonsOnly
+  operator: Exists
+- effect: NoSchedule
+  key: node-role.kubernetes.io/control-plane
+  operator: Exists
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  operator: Exists

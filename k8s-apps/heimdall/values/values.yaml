@@ -1,0 +1,8 @@
+persistence:
+  config:
+    enabled: true
+    type: pvc
+    mountPath:  /config
+    readOnly: false
+    size: 1Gi
+    retain: true

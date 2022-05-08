@@ -1,0 +1,25 @@
+version: 3
+
+tasks:
+  start:
+  - systemctl start k3s
+
+  stop:
+  - systemctl stop k3s
+
+  uninstall:
+  - k3s-uninstall.sh
+  
+  install:
+  - >
+    curl -sfL https://get.k3s.io | sh -s - 
+    --write-kubeconfig-mode 0644
+    --disable local-storage
+    --disable metrics-server
+    #--disable servicelb
+  - task: configure
+
+  configure:
+  - mkdir -p ~/.kube || true
+  - sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+  - sudo chmod 644 ~/.kube/config

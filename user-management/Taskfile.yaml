@@ -1,0 +1,73 @@
+version: 3
+
+tasks:
+  generate-certificate:
+    cmds:
+    - mkdir certificates/{{ .CLI_ARGS }}
+    - openssl req -new -newkey rsa:4096 -nodes -keyout certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.key -out certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.csr -subj "/CN={{ .CLI_ARGS }}/O=Comarch"
+    status:
+    - test -d certificates/{{ .CLI_ARGS }}
+
+  create-csr:
+    env:
+      NAME: '{{ .CLI_ARGS }}'
+      CSR:
+        sh: cat certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.csr | base64 -w0
+    cmds:
+    - envsubst < csr.yaml.template | kubectl apply -f -
+    status:
+    - kubectl get csr | grep {{ .CLI_ARGS }}
+
+  approve-csr:
+    cmds:
+    - kubectl certificate approve {{ .CLI_ARGS }}
+    preconditions:
+    - kubectl get csr | grep {{ .CLI_ARGS }}
+    status:
+    - kubectl get csr | grep {{ .CLI_ARGS }} | grep -i approved
+
+  get-signed-certificate:
+    cmds:
+    - kubectl get csr {{ .CLI_ARGS }} -o jsonpath='{.status.certificate}' | base64 -d > certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.crt
+    status:
+    - test -f certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.crt
+
+  get-ca-certificate:
+    vars:
+      CLUSTER_NAME: '{{ .CLI_ARGS }}'
+    cmds:
+    - cat ~/.kube/config | yq e '.clusters[] | select (.name=="{{ .CLI_ARGS }}") | .cluster.certificate-authority-data' | base64 -d > certificates/cluster-ca.crt
+    
+
+# TODO, load cluster info from dotenv file
+# https://taskfile.dev/#/usage?id=env-files 
+
+
+  create-kubeconfig:
+    env:
+      CLUSTER_NAME: '{{ .CLUSTER_NAME }}'
+      CLUSTER_API: 
+        sh: cat ~/.kube/config | yq e '.clusters[] | select (.name=="{{ .CLUSTER_NAME }}") | .cluster.server'
+      CLUSTER_CA:
+        sh: cat ~/.kube/config | yq e '.clusters[] | select (.name=="{{ .CLUSTER_NAME }}") | .cluster.certificate-authority-data'
+      USER_NAME: '{{ .USER_NAME }}'
+      USER_CRT:
+        sh: cat certificates/{{  .USER_NAME  }}/{{  .USER_NAME  }}.crt | base64 -w0
+      USER_KEY:
+        sh: cat  certificates/{{  .USER_NAME }}/{{  .USER_NAME  }}.key | base64 -w0
+    cmds:
+    - envsubst < kubeconfig.tpl > certificates/{{ .USER_NAME  }}/kubeconfig
+    status:
+    - test -f certificates/{{ .USER_NAME }}/kubeconfig
+    preconditions:
+    - CLUSTER_NAME={{ .CLUSTER_NAME }}; test ! -z "$CLUSTER_NAME" 
+    - USER_NAME={{ .USER_NAME }}; test ! -z "$USER_NAME"
+
+
+  assign-namespace-admin:
+    vars: 
+      USER_NAME: '{{ .USER_NAME }}'
+      NAMESPACE_NAME: '{{ .NAMESPACE_NAME }}'
+    cmds:
+    - kubectl create rolebinding {{ .USER_NAME }}-{{ .NAMESPACE_NAME }}-admin --clusterrole admin -n {{ .NAMESPACE_NAME }}  --user {{ .USER_NAME }}
+

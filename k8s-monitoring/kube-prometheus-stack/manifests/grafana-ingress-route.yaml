@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: kube-prometheus-stack
+spec:
+  entryPoints:
+    - websecure
+    - web
+  routes:
+  - match: HostRegexp(`grafana.{ip:.*}.nip.io`)
+    kind: Rule
+    services:   
+    - kind: Service 
+      name: kube-prometheus-stack-grafana
+      port: 80

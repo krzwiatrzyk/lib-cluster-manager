@@ -1,0 +1,117 @@
+version: '3'
+
+tasks:
+  install:cli:
+    desc: Install tcl and tsh
+    cmds:
+    - curl -L -O https://get.gravitational.com/teleport-v9.0.0-linux-amd64-bin.tar.gz
+    - tar -xzf teleport-v9.0.0-linux-amd64-bin.tar.gz
+    - rm teleport-v9.0.0-linux-amd64-bin.tar.gz
+    - sudo mv teleport/tsh /usr/local/bin/tsh
+    - sudo mv teleport/tctl /usr/local/bin/tctl
+
+  install:agent:linux:
+  - curl -O https://get.gravitational.com/teleport-v9.0.0-linux-amd64-bin.tar.gz
+  - tar -xzf teleport-v9.0.0-linux-amd64-bin.tar.gz
+  - rm teleport-v9.0.0-linux-amd64-bin.tar.gz
+  - cd teleport && sudo ./install
+  - rm -rf teleport
+
+  install:helm:add-repo:
+    cmds:
+    - helm repo add teleport https://charts.releases.teleport.dev
+    status:
+    - helm repo list | grep teleport
+    preconditions:
+    - helm
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - >
+      helm upgrade --install teleport-cluster teleport/teleport-cluster
+      --values=values.yaml --namespace teleport --create-namespace  {{ .CLI_ARGS }}
+    - sleep 5s && kubectl wait pod -n teleport -l app=teleport-cluster --for condition=Ready --timeout 180s
+
+  install:ingress-routes:
+    deps:
+    - update:traefik:helm
+    cmds:
+    - kubectl apply -f manifests/
+
+  show-helm-values:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm show values teleport/teleport-cluster
+
+  add-user:
+    env:
+      POD: 
+        sh: kubectl get -n teleport pod -l app=teleport-cluster -o jsonpath='{.items[0].metadata.name}'
+    cmds:
+    - kubectl exec -n teleport -i ${POD?} -- tctl create -f < config/teleport-role.yaml
+    - kubectl exec -n teleport -ti ${POD?} -- tctl  users add krzwiatrzyk --logins=krzwiatrzyk,root --roles=member,access,editor
+    
+  login-to-kubernetes:
+    cmds:
+    - tsh --insecure login --proxy=teleport.127.0.0.1.nip.io:443 --auth=local --user=krzwiatrzyk teleport.127.0.0.1.nip.io
+    - tsh --insecure kube login teleport.127.0.0.1.nip.io
+
+
+
+  join-server:
+    env:
+      POD: 
+        sh: kubectl get pod -l app=teleport-cluster -o jsonpath='{.items[0].metadata.name}'
+    cmds:
+      - >
+        kubectl exec -i ${POD?} -- tctl tokens add --type=node | grep -oP '(?<=token:\s).*' | tr -d "." > /tmp/token.txt
+      #- sudo bash -c "$(curl --insecure -fsSL https://teleport.127.0.0.1.nip.io/scripts/d31f940acceb74d73f04d050f6012f7f/install-node.sh)"
+      - >
+        sudo teleport start 
+        --insecure
+        --roles=node 
+        --token=/tmp/token.txt 
+        --auth-server=teleport.127.0.0.1.nip.io:443 &
+
+  clear:
+  - sudo rm -rf /var/lib/teleport
+  - sudo rm -f /etc/teleport.yaml
+  - sudo pkill -f teleport
+
+  patch:traefik:deployment:
+  - kubectl patch deployment -n kube-system traefik --patch-file=patches/traefik-deployment.json
+
+  update:traefik:helm:add-repo:
+    cmds:
+    - helm repo add traefik https://helm.traefik.io/traefik
+    status:
+    - helm repo list | grep traefik
+
+  update:traefik:helm:
+    deps:
+    - update:traefik:helm:add-repo
+    cmds:
+    - >
+      helm upgrade 
+      --values=values/traefik.yaml 
+      --install  
+      -n kube-system 
+      traefik
+      traefik/traefik 
+      # --reuse-values 
+
+  patch:ingress-route-tcp:fqdn:
+    env:
+      FQDN: '{{ .FQDN }}'
+    vars:
+      PATCH:
+        sh: envsubst < patches/ingress-route-host.json > tmp/ingress-route-host.json
+    cmds:
+    - defer: rm tmp/ingress-route-host.json
+    - >
+      kubectl patch -n teleport 
+      ingressroutetcp teleport-https 
+      --patch-file tmp/ingress-route-host.json

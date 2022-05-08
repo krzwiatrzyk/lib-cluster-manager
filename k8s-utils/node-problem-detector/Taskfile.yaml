@@ -1,0 +1,18 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add deliveryhero https://charts.deliveryhero.io/
+    status:
+    - helm repo list | grep deliveryhero
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install node-problem-detector deliveryhero/node-problem-detector -n node-problem-detector --create-namespace
+
+  uninstall:helm:
+    cmds:
+    - helm uninstall -n node-problem-detector node-problem-detector

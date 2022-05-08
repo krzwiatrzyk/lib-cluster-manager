@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    status:
+    - helm repo list | grep prometheus
+
+  install:helm:
+    deps:
+    - task: install:helm:add-repo
+    cmds:
+    - helm upgrade --install prometheus-adapter prometheus-community/prometheus-adapter -n kube-prometheus-stack --values=values/values.yaml

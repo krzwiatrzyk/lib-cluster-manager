@@ -1,0 +1,28 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add cloudnativeapp https://cloudnativeapp.github.io/charts/curated/
+    status:
+    - helm repo list | grep cloudnativeapp
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install weave-scope cloudnativeapp/weave-scope --version 1.0.0 -n weave-scope --create-namespace --set global.image.tag=1.13.2
+
+  uninstall:helm:
+    cmds:
+    - helm uninstall -n weave-scope weave-scope
+
+  show-values:browser:
+    cmds:
+    - firefox https://artifacthub.io/packages/helm/cloudnativeapp/weave-scope 
+
+  install:kubectl:
+  - kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+  
+  uninstall:kubectl:
+  - kubectl delete -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"

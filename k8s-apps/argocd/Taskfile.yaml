@@ -1,0 +1,20 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add argo https://argoproj.github.io/argo-helm
+    status:
+    - helm repo list | grep argo 
+
+  install:helm:
+  - helm upgrade --install argocd argo/argo-cd -n argocd --create-namespace -f values/argocd.yaml
+  
+  install:ingress-route:
+  - kubectl apply -f manifests/ingress-route.yaml
+
+  create-key-secret:
+    cmds:
+    - kubectl create secret generic -n argocd helm-secrets-private-keys --from-file=key.asc=${HOME}/.age
+    status:
+    - kubectl get -n argocd secret helm-secrets-private-keys

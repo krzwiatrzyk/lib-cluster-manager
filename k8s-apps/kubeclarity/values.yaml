@@ -57,7 +57,7 @@ kubeclarity-runtime-scan:
   resultServicePort: 8888
 
   registry:
-    skipVerifyTlS: "false"
+    skipVerifyTlS: "true"
     useHTTP: "false"
 
   cis-docker-benchmark-scanner:

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubecost-prometheus
+  namespace: kubecost
+spec:
+  rules:
+  - host: prometheus.127.0.0.1.nip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: kubecost-prometheus-server
+            port:
+              name: http
+        path: /
+        pathType: Prefix

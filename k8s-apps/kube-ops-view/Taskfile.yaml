@@ -1,0 +1,8 @@
+version: 3
+
+tasks:
+  demo:
+  - k3d create cluster demo
+  - kubectl proxy &
+  - docker run --rm -it --net=host hjacobs/kube-ops-view
+  - k3d delete cluster demo

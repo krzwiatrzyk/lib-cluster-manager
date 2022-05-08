@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: echo-server
+  namespace: echo-server
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`echo-server.127.0.0.1.nip.io`)
+    kind: Rule
+    services:   
+    - kind: Service 
+      name: echo-server
+      port: 80

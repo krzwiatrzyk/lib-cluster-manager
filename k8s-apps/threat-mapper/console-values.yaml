@@ -1,0 +1,18 @@
+volume:
+  storageClass: openebs-hostpath
+  # Change stoage class when using different PV provisioner.
+  # For example, it will be 'openebs-hostpath' when using openebs
+  # or it will be 'default' when using cloud managed Persistent Volumes.
+  esStorage: 5Gi
+  postgresStorage: 5Gi
+
+elasticsearchReplicationFactor: 1
+
+namespace: threatmapper
+
+# Mount container runtime socket path to agent pod. Agent will detect which runtime it is using these files.
+mountContainerRuntimeSocket:
+  dockerSock: "false"
+  dockerSockPath: "/var/run/docker.sock"
+  containerdSock: "true"
+  containerdSockPath: "/run/k3s/containerd/containerd.sock"

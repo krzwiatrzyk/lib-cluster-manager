@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: DomainMapping
+metadata:
+  name: <domain-name>
+  namespace: <namespace>
+spec:
+  ref:
+    name: <service-name>
+    kind: Service
+    apiVersion: serving.knative.dev/v1
+  # tls:
+  #   secretName: <cert-secret>
