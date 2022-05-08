@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Kubenav
+Exec=kubenav
+Comment=
+Terminal=false
+Icon=gnome-panel-launcher
+Type=Application
+version: 3

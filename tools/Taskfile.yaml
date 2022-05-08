@@ -1,0 +1,21 @@
+version: 3
+
+tasks:
+  lens:install: echo
+  monokle:install: echo
+
+  kubenav:install:
+  - wget -nc https://github.com/kubenav/kubenav/releases/download/3.9.0/kubenav-linux-amd64.zip
+  - unzip kubenav-linux-amd64.zip
+  - rm kubenav-linux-amd64.zip
+  - sudo mv kubenav ~/.local/bin/
+
+  alacarte:install:
+  - sudo apt-get install alacarte -y
+
+  configure:launcher:
+  - copy alacarte-made.desktop ~/local/share/applications/alacarte-made.desktop
+
+  edit-favourite-apps:
+  - gsettings get org.gnome.shell favorite-apps
+  - gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'org.gnome.Nautilus.desktop', 'snap-store_ubuntu-software.desktop', 'terminator.desktop', 'code_code.desktop', 'spotify_spotify.desktop', 'Kubenav']"
