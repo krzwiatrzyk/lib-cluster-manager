@@ -11,12 +11,40 @@ tasks:
     deps:
     - install:helm:add-repo
     cmds:
-    - helm upgrade --install deepfence-console deepfence/deepfence-console -n threatmapper --create-namespace
+    - helm upgrade --install deepfence-console deepfence/deepfence-console -n threatmapper --create-namespace -f console-values.yaml
+    - task: install:helm:router
+    - task: patch:affinity
+    - task: patch:replicas
+
+  install:helm:router:
+    cmds:
+    - helm upgrade --install deepfence-router deepfence/deepfence-router -f router-values.yaml
+
+  install:helm:agent:
+    cmds:
+    - helm upgrade --install -f agent-values.yaml -n threatmapper deepfence-agent deepfence/deepfence-agent
+
+  patch:affinity:
+  - kubectl patch deployment -n threatmapper deepfence-backend --patch-file patches/affinity.yaml
+  - kubectl patch deployment -n threatmapper deepfence-api --patch-file patches/affinity.yaml
+  - kubectl patch deployment -n threatmapper deepfence-celery --patch-file patches/affinity.yaml
+  - kubectl patch deployment -n threatmapper deepfence-diagnosis --patch-file patches/affinity.yaml
+
+  patch:replicas:
+  - kubectl scale deployment -n deepfence deepfence-router --replicas 1
+
 
   uninstall:helm:
     cmds:
     - helm uninstall -n 
 
-# # Optionally, install the Deepfence Router service and wait for the platform to deploy a load balancer
-# helm install deepfence-router deepfence/deepfence-router
-# kubectl get --namespace default svc -w deepfence-router
+  values:helm:
+    - helm show values deepfence/deepfence-console
+
+  values:helm:router:
+    - helm show values deepfence/deepfence-router
+  
+  values:helm:agent:
+    - helm show values deepfence/deepfence-agent
+
+# Optionally, install the Deepfence Router service and wait for the platform to deploy a load balancer
