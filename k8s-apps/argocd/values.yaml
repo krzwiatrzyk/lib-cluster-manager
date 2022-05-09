@@ -1,0 +1,83 @@
+## Server
+server:
+  config:
+    helm.valuesFileSchemes: >-
+      secrets+gpg-import, secrets+gpg-import-kubernetes,
+      secrets+age-import, secrets+age-import-kubernetes,
+      secrets,
+      https
+  extraArgs:
+  - --insecure
+
+repoServer:
+  serviceAccount:
+    create: true
+    name: argocd-repo-server
+
+  rbac:
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - get
+
+  initContainers:
+    - name: download-tools
+      image: alpine:latest
+      command: [sh, -ec]
+      env:
+        - name: HELM_SECRETS_VERSION
+          value: "3.13.0"
+        - name: SOPS_VERSION
+          value: "3.7.2"
+        - name: KUBECTL_VERSION
+          value: "1.22.0"
+      args:
+        - |
+          mkdir -p /custom-tools/helm-plugins
+          #wget -qO- https://github.com/jkroepke/helm-secrets/releases/download/v${HELM_SECRETS_VERSION}/helm-secrets.tar.gz | tar -C /custom-tools/helm-plugins -xzf-;
+          wget https://github.com/jkroepke/helm-secrets/tarball/main -qO- | tar -C /custom-tools/helm-plugins -xz;
+          mv /custom-tools/helm-plugins/jkroepke-helm-secrets-* /custom-tools/helm-plugins/helm-secrets
+
+          wget -qO /custom-tools/sops https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/sops-v${SOPS_VERSION}.linux
+          wget -qO /custom-tools/kubectl https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+          wget -qO /custom-tools/curl https://github.com/moparisthebest/static-curl/releases/latest/download/curl-amd64 \
+
+          chmod +x /custom-tools/*
+          
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+
+  env:
+    - name: HELM_PLUGINS
+      value: /custom-tools/helm-plugins/
+    # In case wrapper scripts are used, HELM_SECRETS_HELM_PATH needs to be the path of the real helm binary
+    - name: HELM_SECRETS_HELM_PATH
+      value: /usr/local/bin/helm
+    - name: HELM_SECRETS_SOPS_PATH
+      value: /custom-tools/sops
+    - name: HELM_SECRETS_CURL_PATH
+      value: /custom-tools/curl
+    - name: HELM_SECRETS_KUBECTL_PATH
+      value: /custom-tools/kubectl
+    # https://github.com/jkroepke/helm-secrets/wiki/Security-in-shared-environments
+    - name: HELM_SECRETS_VALUES_ALLOW_SYMLINKS
+      value: "false"
+    - name: HELM_SECRETS_VALUES_ALLOW_ABSOLUTE_PATH
+      value: "false"
+    - name: HELM_SECRETS_VALUES_ALLOW_PATH_TRAVERSAL
+      value: "false"
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+  volumeMounts:
+    - mountPath: /custom-tools
+      name: custom-tools
+
+## Argo Configs
+configs:
+  secret:
+    createSecret: true
+    argocdServerAdminPassword: "$2a$10$slJ/E28ywpywfOrhAbHIFuohAGDp2Wv0jIysH3rgo.bfTTne8MRNe"
