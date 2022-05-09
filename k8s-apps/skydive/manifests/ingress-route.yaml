@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: skydive
+  namespace: skydive
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`skydive.127.0.0.1.nip.io`)
+    kind: Rule
+    services:   
+    - kind: Service 
+      name: skydive
+      port: 8080

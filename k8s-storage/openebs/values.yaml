@@ -1,0 +1,9 @@
+ndm:
+  enabled: false
+ndmOperator:
+  enabled: false
+analytics:
+  enabled: false
+localprovisioner:
+  deviceClass:
+    enabled: false

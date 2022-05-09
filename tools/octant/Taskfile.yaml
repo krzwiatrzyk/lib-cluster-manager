@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  install:
+  - wget -nc https://github.com/vmware-tanzu/octant/releases/download/v0.25.1/octant_0.25.1_Linux-64bit.deb
+  - sudo dpkg -i octant_0.25.1_Linux-64bit.deb
+  - rm octant_0.25.1_Linux-64bit.deb
+  status:
+  - command -v octant
+
+  install:plugin:helm:
+    cmds:
+    - mkdir -p ~/.config/octant/plugins/ 
+    - curl -L https://github.com/bloodorangeio/octant-helm/releases/download/v0.2.0/octant-helm_0.2.0_linux_amd64.tar.gz | tar xz -C ~/.config/octant/plugins/ octant-helm

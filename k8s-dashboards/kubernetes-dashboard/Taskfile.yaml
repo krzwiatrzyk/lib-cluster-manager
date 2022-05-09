@@ -1,0 +1,17 @@
+version: 3
+
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+    status:
+    - helm repo list | grep kubernetes-dashboard
+
+  install:helm:
+    cmds:
+    - helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n kubernetes-dashboard --create-namespace
+
+  uninstall:helm:
+    cmds:
+    - helm uninstall kubernetes-dashboard -n kubernetes-dashboard

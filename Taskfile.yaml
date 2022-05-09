@@ -13,7 +13,16 @@ includes:
   local-apps: .taskfiles/local-apps.yaml
   istio: .taskfiles/istio.yaml
   monitoring: .taskfiles/monitoring.yaml
-
+  tools:mizu: tools/mizu/Taskfile.yaml
+  k8s-apps:skydive: 
+    taskfile: k8s-apps/skydive/Taskfile.yaml
+    dir: k8s-apps/skydive
+  k8s-dashboards:weave-scope:
+    taskfile: k8s-dashboards/weave-scope/Taskfile.yaml
+    dir: k8s-dashboards/weave-scope
+  tools:octant:
+    taskfile: tools/octant/Taskfile.yaml
+    dir: tools/octant
 vars:
   STATUS_FILES_PATH: .taskfiles/statusfiles
   USER_STATUS_FILES_PATH: ~/.statusfiles
