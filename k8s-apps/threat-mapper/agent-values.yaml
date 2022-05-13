@@ -1,0 +1,9 @@
+managementConsoleUrl: 172.24.0.2
+deepfenceKey: d4afda42-9c13-4341-86fe-c1c850e69d2a
+
+# Mount container runtime socket path to agent pod. Agent will detect which runtime it is using these files.
+mountContainerRuntimeSocket:
+  dockerSock: "false"
+  dockerSockPath: "/var/run/docker.sock"
+  containerdSock: "true"
+  containerdSockPath: "/run/k3s/containerd/containerd.sock"
