@@ -31,4 +31,4 @@ tasks:
     - kubectl apply -f manifests/ingress-route.yaml
 
   uninstall:
-    - helm uninstall -n skydive skydive-agent skydive analyzer
+    - helm uninstall -n skydive skydive-agent skydive-analyzer

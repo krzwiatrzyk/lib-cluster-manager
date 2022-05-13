@@ -17,12 +17,18 @@ includes:
   k8s-apps:skydive: 
     taskfile: k8s-apps/skydive/Taskfile.yaml
     dir: k8s-apps/skydive
+  k8s-apps:echo-server: 
+    taskfile: k8s-apps/echo-server/Taskfile.yaml
+    dir: k8s-apps/echo-server
   k8s-dashboards:weave-scope:
     taskfile: k8s-dashboards/weave-scope/Taskfile.yaml
     dir: k8s-dashboards/weave-scope
   tools:octant:
     taskfile: tools/octant/Taskfile.yaml
     dir: tools/octant
+  k8s-utils:node-problem-detector: 
+    taskfile: k8s-utils/node-problem-detector/Taskfile.yaml
+    dir: k8s-utils/node-problem-detector
 vars:
   STATUS_FILES_PATH: .taskfiles/statusfiles
   USER_STATUS_FILES_PATH: ~/.statusfiles

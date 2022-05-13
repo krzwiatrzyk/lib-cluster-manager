@@ -1,15 +1,15 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: skydive
-  namespace: skydive
+  name: echo-server
+  namespace: echo-server
 spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`skydive.127.0.0.1.nip.io`)
+  - match: Host(`echo-server.127.0.0.1.nip.io`)
     kind: Rule
     services:   
     - kind: Service 
-      name: skydive-analyzer
-      port: 8082
+      name: echo-server
+      port: 80

@@ -1,0 +1,20 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add ealenn https://ealenn.github.io/charts
+    status:
+    - helm repo list | grep ealenn
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade -i echo-server ealenn/echo-server --namespace echo-server --create-namespace
+
+  uninstall:helm:
+    - helm uninstall -n echo-server echo-server
+
+  install:ingress-route:
+    - kubectl apply -f manifests/ingress-route.yaml
