@@ -1,0 +1,61 @@
+version: 3
+
+tasks:
+  generate-certificate:
+    cmds:
+    - mkdir certificates/{{ .CLI_ARGS }}
+    - openssl req -new -newkey rsa:4096 -nodes -keyout certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.key -out certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.csr -subj "/CN={{ .CLI_ARGS }}/O=Comarch"
+    status:
+    - test -d certificates/{{ .CLI_ARGS }}
+
+  create-csr:
+    env:
+      NAME: '{{ .CLI_ARGS }}'
+      CSR:
+        sh: cat certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.csr | base64 -w0
+    cmds:
+    - envsubst < csr.yaml.template | kubectl apply -f -
+    status:
+    - kubectl get csr | grep {{ .CLI_ARGS }}
+
+  approve-csr:
+    cmds:
+    - kubectl certificate approve {{ .CLI_ARGS }}
+    preconditions:
+    - kubectl get csr | grep {{ .CLI_ARGS }}
+    status:
+    - kubectl get csr | grep {{ .CLI_ARGS }} | grep -i approved
+
+  get-signed-certificate:
+    cmds:
+    - kubectl get csr {{ .CLI_ARGS }} -o jsonpath='{.status.certificate}' | base64 -d > certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.crt
+    status:
+    - test -f certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.crt
+      
+# TODO, load cluster info from dotenv file
+# https://taskfile.dev/#/usage?id=env-files 
+
+  create-kubeconfig:
+    env:
+      CLUSTER_NAME: 
+      CLUSTER_API: 
+      CLUSTER_CA:
+        sh: cat certificates/cluster-ca.crt | base64 -w0
+      USER_NAME: '{{ .CLI_ARGS }}'
+      USER_CRT:
+        sh: cat certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.crt | base64 -w0
+      USER_KEY:
+        sh: cat  certificates/{{ .CLI_ARGS }}/{{ .CLI_ARGS }}.key | base64 -w0
+    cmds:
+    - envsubst < kubeconfig.tpl > certificates/{{ .CLI_ARGS }}/kubeconfig
+    status:
+    - test -f certificates/{{ .CLI_ARGS }}/kubeconfig
+    preconditions:
+    - TEST={{ .CLI_ARGS }}; test ! -z "$TEST" 
+
+  assign-namespace-admin:
+    vars: 
+      USER_NAME: '{{ .CLI_ARGS }}'
+      NAMESPACE_NAME: 
+    cmds:
+    - kubectl create rolebinding {{ .USER_NAME }}-{{ .NAMESPACE_NAME }}-admin --clusterrole admin -n {{ .NAMESPACE_NAME }}  --user {{ .USER_NAME }}
