@@ -1,1 +1,0 @@
-Initial python scripts took from: https://stackabuse.com/serving-files-with-pythons-simplehttpserver-module/

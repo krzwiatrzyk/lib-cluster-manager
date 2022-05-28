@@ -1,0 +1,9 @@
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+url: krzwiatrzyk.pl

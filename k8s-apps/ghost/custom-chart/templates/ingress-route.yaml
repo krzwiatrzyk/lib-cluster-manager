@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ghost
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`{{ .Values.url }}`)
+    kind: Rule
+    services:
+    - kind: Service
+      name: ghost
+      port: 2368

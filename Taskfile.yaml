@@ -10,7 +10,6 @@ includes:
   ansible: .taskfiles/ansible.yaml
   python: .taskfiles/python.yaml
   apps: .taskfiles/apps.yaml
-  local-apps: .taskfiles/local-apps.yaml
   istio: .taskfiles/istio.yaml
   k8s-tools:mizu: k8s-tools/mizu/Taskfile.yaml
   k8s-apps:skydive: 

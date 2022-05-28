@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost
+spec:
+  selector:
+    matchLabels:
+      app: ghost
+  template:
+    metadata:
+      labels:
+        app: ghost
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ghost
+          # hostPath:
+          #   path: /ghost
+          #   type: Directory
+      containers:
+      - name: ghost
+        image: ghost:{{ .Chart.AppVersion }}
+        resources:
+          {{- .Values.resources | toYaml | nindent 10 }}
+        ports:
+        - containerPort: 2368
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/ghost/content
+        env:
+        - name: url
+          value: "https://{{ .Values.url }}"
+        - name: DEBUG
+          value: "ghost:*,ghost-config"
+        - name: NODE_ENV
+          value: production

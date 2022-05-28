@@ -26,3 +26,8 @@ tasks:
 
   uninstall:pvc:
     - kubectl delete -n ghost $(kubectl get pvc -n ghost -o name | grep ghost)
+
+  install:custom-chart:
+    dir: custom-chart
+    cmds:
+    - helm upgrade --install ghost . -n ghost --create-namespace
