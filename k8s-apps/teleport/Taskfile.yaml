@@ -40,7 +40,7 @@ tasks:
     cmds:
     - kubectl apply -f manifests/
 
-  show-helm-values:
+  show:helm-values:
     deps:
     - install:helm:add-repo
     cmds:

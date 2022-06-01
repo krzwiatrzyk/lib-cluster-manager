@@ -11,12 +11,22 @@ tasks:
     deps:
     - install:helm:add-repo
     cmds:
-    - helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n kubernetes-dashboard --create-namespace
+    - helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard -n kubernetes-dashboard --create-namespace -f values/custom.yaml
 
   uninstall:helm:
     cmds:
     - helm uninstall kubernetes-dashboard -n kubernetes-dashboard
 
-  install:ingress-route:
+  install:ingress-route-tcp:
     cmds:
     - kubectl apply -f manifests/ingress-route-tcp.yaml
+
+  install:ingress-route:
+    cmds:
+    - kubectl apply -f manifests/ingress-route.yaml
+
+  show:values:
+  - firefox https://artifacthub.io/packages/helm/k8s-dashboard/kubernetes-dashboard?modal=values
+  
+  show:arguments: 
+  - https://github.com/kubernetes/dashboard/blob/master/docs/common/dashboard-arguments.md

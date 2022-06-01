@@ -25,7 +25,9 @@ service:
 #   - foo
 
 # Extra arguments to pass to 'teleport start' for the main Teleport pod
-# extraArgs: []
+extraArgs:
+- --insecure-no-tls
+- --insecure
 
 # Extra environment to be configured on the Teleport pod
 # extraEnv: []

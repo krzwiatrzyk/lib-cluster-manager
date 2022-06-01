@@ -7,7 +7,7 @@ spec:
   entryPoints:                  
     - websecure
   routes:                       
-  - match: HostSNI(`teleport.{suffix:.*}`)                    
+  - match: HostSNIRegexp(`teleport.{suffix:.*}`)                    
     services:                 
     - name: teleport-cluster            
       port: 443         

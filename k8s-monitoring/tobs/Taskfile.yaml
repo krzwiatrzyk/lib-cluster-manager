@@ -1,0 +1,20 @@
+version: 3
+
+tasks:
+  install:cli:
+    cmds:
+    - curl --proto '=https' -A 'tobs' --tlsv1.2 -sSLf  https://tsdb.co/install-tobs-sh |sh
+    status:
+    - command -v tobs
+
+  show-values:
+  - tobs helm show-values
+
+  install:
+    cmds:
+    - tobs install --namespace tobs
+    # - firefox https://github.com/timescale/tobs/blob/master/chart/values.yaml
+
+  uninstall:
+    cmds:
+    - tobs uninstall -n tobs
