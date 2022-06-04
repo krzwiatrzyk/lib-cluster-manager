@@ -1,6 +1,19 @@
 version: 3
 
 tasks:
+  install:cli:
+    cmds:
+    - arkage get argocd
+    status:
+    - command -v argocd
+
+  install:cli:autocompletion:
+    cmds:
+    - argocd completion zsh > "${HOME}/.oh-my-zsh/custom/plugins/fzf-zsh-plugin/completions/_argocd"
+    - compinit
+    #- argocd completion zsh > ~/.oh-my-zsh/custom/argocd.zsh
+    
+
   install:helm:add-repo:
     cmds:
     - helm repo add argo https://argoproj.github.io/argo-helm
