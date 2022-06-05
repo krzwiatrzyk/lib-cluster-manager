@@ -11,6 +11,8 @@ ingress:
 
 replicas: 1
 
+bootstrapPassword: bootstrap123
+
 
 # Where to offload the TLS/SSL encryption
 # - ingress (default)

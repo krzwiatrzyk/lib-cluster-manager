@@ -1,0 +1,8 @@
+version: 3
+
+tasks:
+  install:
+    cmds:
+    - curl -L https://github.com/kubernetes/kompose/releases/download/v1.26.1/kompose-linux-amd64 -o kompose
+    status:
+    - command -v kompose

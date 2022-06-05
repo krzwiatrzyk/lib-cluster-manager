@@ -25,9 +25,7 @@ tasks:
     - firefox https://artifacthub.io/packages/helm/rancher-stable/rancher?modal=values 
 
   show:bootstrap:url:
-  - echo https://rancher.apps-pfm.toss.comarch/dashboard/?setup=$(kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.data.bootstrapPassword}' | base64 -d)
+  - echo https://rancher.127.0.0.1.nip.io/dashboard/?setup=$(kubectl get secret --namespace cattle-system bootstrap-secret -o jsonpath='{.data.bootstrapPassword}' | base64 -d)
   
-  show:bootstrap:password:
-  - kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{ "\n" }}'
 
   

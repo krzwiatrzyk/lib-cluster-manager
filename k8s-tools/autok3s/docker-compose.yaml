@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  autok3s:
+    image: cnrancher/autok3s:v0.5.0
+    ports:
+    - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - $HOME/.autok3s/:$HOME/.autok3s/
+    environment:
+    - AUTOK3S_CONFIG=$HOME/.autok3s/
+    - VIRTUAL_HOST=autok3s.vcap.me

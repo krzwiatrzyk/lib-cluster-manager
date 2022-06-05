@@ -1,0 +1,25 @@
+version: 3
+
+tasks:
+  convert:
+    cmds:
+    - kompose convert -c -o autok3s
+    sources:
+    - ./docker-compose.yaml
+    generates:
+    - autok3s/*
+
+  install:docker-compose:
+    cmds:
+    - docker-compose up
+
+  install:helm:
+    dir: autok3s
+    cmds:
+    - helm upgrade --install -n autok3s --create-namespace autok3s .
+
+  uninstall:docker-compose:
+
+  uninstall:helm:
+  - helm uninstall autok3s -n autok3s
+  
