@@ -1,0 +1,27 @@
+version: 3
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add stackgres-charts https://stackgres.io/downloads/stackgres-k8s/stackgres/helm/
+    status:
+    - helm repo list | grep stackgres
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - >
+      helm install stackgres stackgres-charts/stackgres-operator
+      --namespace stackgres
+      --create-namespace
+      --values values/custom.yaml
+
+  uninstall:helm:
+  - helm uninstall -n stackgres stackgres
+
+  install:ingress-route:
+  - kubectl apply -f manifests/ingress-route.yaml
+
+  show:values:
+  - firefox https://artifacthub.io/packages/helm/stackgres-charts/stackgres-operator?modal=values

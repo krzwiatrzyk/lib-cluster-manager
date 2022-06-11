@@ -1,0 +1,33 @@
+clusterName: teleport.127.0.0.1.nip.io
+#kubeClusterName: ""
+
+authenticationSecondFactor:
+  secondFactor: "off"
+
+persistence:
+  volumeSize: 5Gi
+
+service:
+  type: ClusterIP
+
+# extraVolumes:
+# - name: myvolume
+#   secret:
+#     secretName: mysecret
+
+# extraVolumeMounts:
+# - name: myvolume
+#   mountPath: /path/to/mount/volume
+
+# postStart:
+#   command:
+#   - echo
+#   - foo
+
+# Extra arguments to pass to 'teleport start' for the main Teleport pod
+extraArgs:
+- --insecure-no-tls
+- --insecure
+
+# Extra environment to be configured on the Teleport pod
+# extraEnv: []

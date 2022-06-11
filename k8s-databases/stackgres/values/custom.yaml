@@ -1,0 +1,33 @@
+adminui:
+  service:
+    exposeHTTP: true
+    type: ClusterIP
+
+# Custom credentials for the operator's admin user
+authentication:
+  user: admin
+  password: password
+
+prometheus:
+  allowAutobind: true
+
+
+grafana:
+  #Embed an existing grafana by setting grafana.autoEmbed to true
+  autoEmbed: true
+  user: admin
+  password: prom-operator
+  # Set the HTTP scheme used by grafana:
+  schema: http
+  webHost: "kube-prometheus-stack-grafana.kube-prometheus-stack.svc"
+  datasourceName: Prometheus
+  # dashboardConfigMap:
+  dashboardId: 9628
+  # Create grafana dashboard for postgres exporter and copy/paste share URL:
+  # - Grafana > Create > Import > Grafana.com Dashboard 9628
+  # Copy/paste grafana dashboard URL for postgres exporter:
+  # - Grafana > Dashboard > Manage > Select postgres exporter dashboard > Copy URL
+  # url: "http://localhost:3000/d/000000039/postgresql-database?orgId=1&refresh=10s"
+  # Create and copy/paste grafana API token:
+  # - Grafana > Configuration > API Keys > Add API key (for viewer) > Copy key value
+  # token: 

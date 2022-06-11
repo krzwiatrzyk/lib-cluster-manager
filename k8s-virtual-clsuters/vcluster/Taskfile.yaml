@@ -1,0 +1,47 @@
+version: 3
+
+vars:
+  CLUSTER_NAME: "{{ .CLUSTER_NAME }}"
+  FQDN: "{{ .FQDN }}"
+
+env:
+  CLUSTER_NAME: '{{ .CLUSTER_NAME }}'
+  NAMESPACE: 'vcluster-{{ .CLUSTER_NAME }}'
+  FQDN: '{{ .FQDN }}'
+
+tasks:
+  install:cli:
+    cmds:
+    - arkade get vcluster
+    status:
+    - command -v vcluster
+
+  vcluster:create:
+    cmds:
+      - envsubst < values/custom.tpl > tmp/custom.yaml
+      - >
+        vcluster create {{ .CLUSTER_NAME }}
+        -n vcluster-{{ .CLUSTER_NAME }}
+        --distro k3s 
+        --kubernetes-version 1.24
+        --upgrade
+        --extra-values tmp/custom.yaml
+    preconditions:
+      - test ! -z $FQDN 
+      - test ! -z $CLUSTER_NAME
+
+
+  vcluster:destroy:
+    cmds:
+    - vcluster delete {{ .CLUSTER_NAME }} -n vcluster-{{ .CLUSTER_NAME }}
+
+  vcluster:connet:port-forward:
+  - vcluster connect {{ .CLUSTER_NAME }} -n vcluster-{{ .CLUSTER_NAME }} --update-current
+
+  vcluster:connect:ingress:
+    cmds:
+    - vcluster connect {{ .CLUSTER_NAME }} -n vcluster-{{ .CLUSTER_NAME }} --update-current --server=https://{{ .FQDN }}
+
+  vcluster:expose:ingress:
+    cmds:
+    - envsubst < manifests/ingress.yaml | kubectl apply -f -

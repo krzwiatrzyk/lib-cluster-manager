@@ -7,7 +7,7 @@ spec:
   entryPoints:                  
     - tp-kubernetes
   routes:                       
-  - match: HostSNI(`teleport.{suffix:.*}`)                   
+  - match: HostSNIRegexp(`teleport.{suffix:.*}`)                   
     services:                 
     - name: teleport-cluster            
       port: 3026

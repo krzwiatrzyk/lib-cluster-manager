@@ -1,0 +1,26 @@
+version: 3
+
+tasks:
+  start:
+  - czctl start
+
+  stop:
+  - czctl stop
+
+  install:
+    cmds:
+    - curl -L https://releases.codezero.io/install.sh | sudo /bin/bash
+    status:
+    - command -v czctl 
+
+  example:mount:
+  - czctl mount deployment -n default uptime-kuma ./mnt
+
+  example:unmount:
+  - czctl mount deployment -n default uptime-kuma ./mnt -c
+
+  session:cleanup:
+  - czctl session close --all
+
+  session:list:
+  - czctl session list

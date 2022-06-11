@@ -1,0 +1,25 @@
+version: 3
+
+vars:
+  VERSION: 5.5.3
+
+tasks:
+  install:requirements:
+    cmds:
+    - sudo apt install libfuse2 -y
+    status:
+    - apt list --installed | grep libfuse2
+
+  install:shortcut:
+  - cp openlens.desktop ~/.local/share/applications/
+  - wget https://k8slens.dev/images/lens-logo-icon.svg -O ~/.local/openlens.svg
+
+  install:
+    deps:
+    - install:requirements:
+    cmds:
+    - wget -nc https://github.com/MuhammedKalkan/OpenLens/releases/download/v{{ .VERSION }}/OpenLens-{{ .VERSION }}.AppImage
+    - chmod +x OpenLens-{{ .VERSION }}.AppImage
+    - sudo mv OpenLens-{{ .VERSION }}.AppImage /usr/local/bin/openlens
+    status:
+    - command -v openlens

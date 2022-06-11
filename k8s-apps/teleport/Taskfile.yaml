@@ -31,7 +31,7 @@ tasks:
     cmds:
     - >
       helm upgrade --install teleport-cluster teleport/teleport-cluster
-      --values=values.yaml --namespace teleport --create-namespace  {{ .CLI_ARGS }}
+      --values=values/teleport.yaml --namespace teleport --create-namespace  {{ .CLI_ARGS }}
     - sleep 5s && kubectl wait pod -n teleport -l app=teleport-cluster --for condition=Ready --timeout 180s
 
   install:ingress-routes:
@@ -101,7 +101,6 @@ tasks:
       -n kube-system 
       traefik
       traefik/traefik 
-      # --reuse-values 
 
   patch:ingress-route-tcp:fqdn:
     env:

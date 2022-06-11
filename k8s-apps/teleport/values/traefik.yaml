@@ -19,24 +19,24 @@ ports:
     expose: true
     exposedPort: 3023
     protocol: TCP
-  # websecure:
-  #   tls:
-  #     enabled: true
+  websecure:
+    tls:
+      enabled: true
 
-global:
-  systemDefaultRegistry: ""
+providers:
+  kubernetesIngress:
+    publishedService:
+      enabled: true
+
 image:
-  name: rancher/mirrored-library-traefik
-  tag: 2.6.1
+  name: traefik
+  tag: "2.7"
 podAnnotations:
   prometheus.io/port: "8082"
   prometheus.io/scrape: "true"
 
 priorityClassName: system-cluster-critical
-providers:
-  kubernetesIngress:
-    publishedService:
-      enabled: true
+
 rbac:
   enabled: true
 tolerations:
@@ -48,3 +48,4 @@ tolerations:
 - effect: NoSchedule
   key: node-role.kubernetes.io/master
   operator: Exists
+

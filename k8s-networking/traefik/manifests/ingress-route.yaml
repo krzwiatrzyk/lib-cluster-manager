@@ -6,9 +6,8 @@ metadata:
 spec:
   entryPoints:
     - websecure
-    - web
   routes:
-  - match: HostRegexp(`traefik.{ip:.*}.nip.io`)
+  - match: HostRegexp(`traefik.{suffix:.*}`)
     kind: Rule
     services:   
     - kind: TraefikService 

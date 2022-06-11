@@ -6,9 +6,8 @@ metadata:
 spec:
   entryPoints:
     - websecure
-    - web
   routes:
-  - match: Host(`prometheus.127.0.0.1.nip.io`)
+  - match: HostRegexp(`prometheus.{suffix:.*}`)
     kind: Rule
     services:   
     - kind: Service 

@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  name: ${CLUSTER_NAME}
+  namespace: ${NAMESPACE}
+spec:
+  rules:
+  - host: ${FQDN}
+    http:
+      paths:
+      - backend:
+          service:
+            name: ${CLUSTER_NAME}
+            port: 
+              number: 443
+        path: /
+        pathType: ImplementationSpecific
