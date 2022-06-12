@@ -4,6 +4,7 @@ metadata:
   name: ghost
 spec:
   entryPoints:
+  - web
   - websecure
   routes:
   - match: Host(`{{ .Values.url }}`)
@@ -12,3 +13,5 @@ spec:
     - kind: Service
       name: ghost
       port: 2368
+    middlewares:
+      - name: redirect-from-http-to-https
