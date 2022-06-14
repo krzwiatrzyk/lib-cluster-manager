@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`suspender.127.0.0.1.nip.io`)
+  - match: HostRegexp(`suspender.{suffix:.*}`)
     kind: Rule
     services:   
     - kind: Service 

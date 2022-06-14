@@ -27,4 +27,6 @@ spec:
         env:
         - name: "KUBE_NS_SUSPENDER_UI_EMBEDDED"
           value: "true"
+        - name: "KUBE_NS_SUSPENDER_CONTROLLER_NAME"
+          value: "kube-ns-suspender"
          
