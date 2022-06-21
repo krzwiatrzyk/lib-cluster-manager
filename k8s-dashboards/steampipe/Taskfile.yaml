@@ -1,0 +1,20 @@
+version: 3
+
+tasks:
+  install:cli:
+    cmds:
+    - sudo /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/turbot/steampipe/main/install.sh)"
+    status:
+    - command -v steampipe
+
+  install:plugin:
+    cmds:
+    - steampipe plugin install kubernetes
+
+  clone:mod:
+  - git clone https://github.com/turbot/steampipe-mod-kubernetes-insights.git
+
+  dashboard:start:
+   dir: steampipe-mod-kubernetes-insights
+   cmds:
+   - steampipe dashboard
