@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  # install:helm:add-repo:
+  #   cmds:
+  #   - helm repo add k8s-at-home https://k8s-at-home.com/charts/
+  #   status:
+  #   - helm repo list | grep k8s-at-home
+
+  install:helm:
+  - helm upgrade --install vaultwarden chart --values=values/custom-ca.yaml -n vaultwarden --create-namespace

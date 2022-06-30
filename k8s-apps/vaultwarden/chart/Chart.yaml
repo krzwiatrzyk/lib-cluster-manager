@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: 1.22.2
+version: 0.5.1
+name: vaultwarden
+dependencies:
+- name: postgresql
+  version: ">10.12.4"
+  repository: https://charts.bitnami.com/bitnami
+- name: vaultwarden 
+  version: 0.4.0
+  repository:  https://gissilabs.github.io/charts/

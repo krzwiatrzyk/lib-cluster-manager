@@ -1,0 +1,53 @@
+vaultwarden:
+  database: 
+    type: postgresql
+    wal: false
+    url: "postgresql://abc:abc@abc-postgresql:5432"
+
+  vaultwarden:
+    admin:
+      enabled: true
+      token: abc
+  persistence:
+    enabled: true
+    size: 5Gi
+    accessMode: ReadWriteOnce
+
+  image:
+    tag: "1.25.0"
+
+  serviceAccount:
+    create: true
+
+  ingress:
+    enabled: true
+    host: "abc"
+    annotations:
+      route.openshift.io/termination: "edge"
+      route.openshift.io/insecureEdgeTerminationPolicy: "Redirect"
+
+  resources:
+    limits:
+      cpu: 2
+      memory: 1Gi
+    requests:
+      cpu: 1
+      memory: 512Mi
+
+postgresql:
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 2
+  global:
+    postgresql:
+      postgresqlPostgresPassword: abc
+      postgresqlUsername: abc
+      postgresqlPassword: abc
+      postgresqlDatabase: abc
+  serviceAccount:
+    enabled: true
+    autoMount: true

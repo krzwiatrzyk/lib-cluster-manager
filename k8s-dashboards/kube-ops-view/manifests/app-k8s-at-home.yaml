@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-ops-view
+  namespace: argocd
+spec:
+  project: apps
+  source:
+    repoURL: https://k8s-at-home.com/charts/
+    targetRevision: '1.1.x'
+    chart: kube-ops-view
+    helm:
+      values: |
+        env:
+          KUBECONFIG_PATH: "/kubeconfig/kubeconfig"
+        persistence:
+          temporary:
+            enabled: true
+            type: emptyDir
+            mountPath: /tmp
+            size: 1Gi
+          kubeconfig:
+            enabled: true
+            type: secret
+            mountPath: /kubeconfig
+            name: kubeconfig
+            subpath: kubeconfig
+            items:
+            - key: kubeconfig
+              path: kubeconfig
+        ingress:
+          main:
+            enabled: true
+            hosts:
+            - host: kube-ops-view.localhost
+              paths:
+              - path: /
+                pathType: ImplementationSpecific
+        resources: 
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-ops-view
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true

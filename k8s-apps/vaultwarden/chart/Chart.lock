@@ -1,0 +1,9 @@
+dependencies:
+- name: vaultwarden
+  repository: https://gissilabs.github.io/charts/
+  version: 0.4.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.6.7
+digest: sha256:34eaa3d62a5e3ae41534399fea8ce4d1e788e037f4dccee9e3dafc37e42b3856
+generated: "2022-06-22T13:14:24.343580603+02:00"

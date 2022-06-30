@@ -1,0 +1,21 @@
+version: 3
+
+
+tasks:
+  install:helm:add-repo:
+    cmds:
+    - helm repo add runix https://helm.runix.net
+    status:
+    - helm repo list | grep https://helm.runix.net
+
+  install:helm:
+    deps:
+    - install:helm:add-repo
+    cmds:
+    - helm upgrade --install pgadmin4 runix/pgadmin4 --values=values/custom.yaml
+
+  create:ingress:
+    vars:
+      INGRESS_HOST: "{{ .INGRESS_HOST }}"
+    cmds:
+    - kubectl create ingress pgadmin4 --rule="{{ .INGRESS_HOST }}/*=pgadmin4:80" 
